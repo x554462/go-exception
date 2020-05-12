@@ -44,13 +44,13 @@ func ThrowMsgWithCallerDepth(msg string, parent ErrorWrapper, callerDepth int) {
 	throwWithCallerDepth(New(msg, parent), callerDepth)
 }
 
-func TryCatch(try func(), catch func(err ErrorWrapper), errs ...error) {
+func TryCatch(try func(), catch func(err ErrorWrapper), errs ...ErrorWrapper) {
 	defer func() {
 		if recv := recover(); recv != nil {
-			if e, ok := recv.(error); ok {
+			if e, ok := recv.(ErrorWrapper); ok {
 				for _, err := range errs {
 					if errors.Is(e, err) {
-						catch(e.(ErrorWrapper))
+						catch(e)
 						return
 					}
 				}
